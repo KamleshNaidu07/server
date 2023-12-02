@@ -13,11 +13,31 @@ const createDoctor = async (doctorData) => {
 };
 
 // Get all doctors
-const getAllDoctors = async () => {
+const getAllDoctors = async (page, limit, searchTerm) => {
   try {
-    const query = 'SELECT * FROM doctors';
-    const [rows] = await pool.query(query);
-    return rows;
+    let query = 'SELECT * FROM doctors';
+    const countQuery = 'SELECT COUNT(*) AS total FROM doctors'; // Query to get total count
+    let totalCount = 0;
+
+    const values = [];
+
+    if (searchTerm) {
+      query += ' WHERE first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR phone_number LIKE ? OR CONCAT(first_name, " ", last_name) LIKE ?';
+      values.push(`%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`);
+    }
+
+    if (limit) {
+      const offset = (page - 1) * limit;
+      query += ' LIMIT ? OFFSET ?';
+      values.push(limit, offset);
+
+      const [countRows] = await pool.query(countQuery);
+      totalCount = countRows[0].total;
+    }
+
+    const [rows] = await pool.query(query, values);
+    // return rows;
+    return { data: rows, totalCount }; 
   } catch (error) {
     throw new Error(error);
   }

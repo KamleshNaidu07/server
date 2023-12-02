@@ -14,8 +14,9 @@ const createDoctor = async (req, res) => {
 
 // Get all doctors
 const getAllDoctors = async (req, res) => {
+  const { page = 1, limit = null, searchTerm = '' } = req.query; 
   try {
-    const doctors = await Doctor.getAllDoctors();
+    const doctors = await Doctor.getAllDoctors(Number(page), Number(limit), searchTerm);
     res.json(doctors);
   } catch (error) {
     // console.error(error); // Log the error to the console for debugging purposes
