@@ -1,6 +1,6 @@
 const pool = require("../database");
 
-const getUserByID = async (username, password) => {
+const getUserByCredentials = async (username, password) => {
   try {
     const query = "SELECT * FROM users WHERE username = ? AND password = ?";
     const [rows] = await pool.query(query, [username, password]);
@@ -10,6 +10,17 @@ const getUserByID = async (username, password) => {
   }
 };
 
+const getUserById = async (userId) => {
+  try {
+    const query = "SELECT * FROM users WHERE id=?";
+    const [rows] = await pool.query(query, [userId]);
+    return rows[0];
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 module.exports = {
-    getUserByID,
+  getUserByCredentials,
+  getUserById,
 }

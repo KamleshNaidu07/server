@@ -7,6 +7,9 @@ const doctorRoutes = require('./routes/doctorRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const prescriptionRoutes = require('./routes/prescriptionRoutes');
 const userRoutes = require('./routes/userRoutes');
+const passport = require('passport');
+require('./passport');
+
 
 const app = express();
 
@@ -15,6 +18,7 @@ app.use(cors());
 
 // Middleware
 app.use(bodyParser.json());
+app.use(passport.initialize());
 
 // Routes
 app.use('/api/patients', patientRoutes);
@@ -23,6 +27,12 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/users', userRoutes);
 
+// app.get('/protected', passport.authenticate('jwt', {session: false}), (req, res)=>{
+//   res.status(200).send({
+//     success: true,
+//     user: req.user
+//   });
+// });
 
 
 // Root endpoint
